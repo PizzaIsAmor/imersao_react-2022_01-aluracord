@@ -37,11 +37,11 @@ function GlobalStyle() {
   );
 }
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component }) {
   return (
     <>
       <GlobalStyle />
-      <Component {...pageProps} />
+      <Component />
     </>
   );
 }
