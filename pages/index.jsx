@@ -74,7 +74,7 @@ function PaginaInicial() {
           }}
           onSubmit={(event) => {
             event.preventDefault();
-            roteamento.push('/chat');
+            roteamento.push(`/chat?username=${userName}`);
           }}
         >
           <Titulo tag="h2">Boas vindas de volta!</Titulo>

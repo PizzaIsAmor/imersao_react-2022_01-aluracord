@@ -7,28 +7,38 @@ import React, { useEffect } from 'react';
 import { useState } from 'react/cjs/react.development';
 import appConfig from '../config.json';
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+import ButtonSendSticker from '../src/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4NTg1OCwiZXhwIjoxOTU4ODYxODU4fQ.-nkzpY58Pk50Lkb0QhgLMg9zMa9aBN_21WEdWAro_aA';
 const SUPABASE_URL = 'https://vymvhblkijwzsrzdiaff.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagemTempoReal(adicionaMensagem) {
+  return supabaseClient
+    .from('mensagens')
+    .on('INSERT', (novaMensagem) => {
+      adicionaMensagem(novaMensagem.new)
+    }).subscribe();
+}
+
 function ChatPage() {
+  const roteamento = useRouter();
   const [campoMensagem, setCampoMensagem] = useState('');
   const [listaMensagem, setListaMensagem] = useState([]);
+  const usuarioLogado = roteamento.query.username;
 
   function handlerNovaMensagem(novaMensagem) {
     const mensagem = {
       id: listaMensagem.length + 1,
-      from: 'usuario',
+      from: usuarioLogado,
       texto: novaMensagem,
     };
 
     supabaseClient
       .from('mensagens')
       .insert([mensagem])
-      .then(({ data }) => {
-        setListaMensagem([data[0], ...listaMensagem]);
-      });
+      .then(({ data }) => { });
 
     setCampoMensagem('');
   }
@@ -41,6 +51,15 @@ function ChatPage() {
       .then(({ data }) => {
         setListaMensagem(data);
       });
+
+    escutaMensagemTempoReal((novaMensagem) => {
+      setListaMensagem((valorAtualListaMensagem) => {
+        return [
+          novaMensagem,
+          ...valorAtualListaMensagem,
+        ]
+      });
+    });
   }, []);
 
   return (
@@ -118,6 +137,10 @@ function ChatPage() {
                 }
               }}
             />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                handlerNovaMensagem(`:sticker: ${sticker}`);
+              }} />
           </Box>
         </Box>
       </Box>
@@ -199,7 +222,14 @@ function MessageList({ mensagens }) {
               {(new Date().toLocaleDateString())}
             </Text>
           </Box>
-          {umaMensagem.texto}
+
+          {umaMensagem.texto.startsWith(':sticker:')
+            ? (
+              <Image src={umaMensagem.texto.replace(':sticker:', '')} />
+            )
+            : (
+              umaMensagem.texto
+            )}
         </Text>
       ))}
     </Box>
