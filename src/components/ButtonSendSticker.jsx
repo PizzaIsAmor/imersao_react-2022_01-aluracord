@@ -1,8 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
-import { Box, Button, Text, Image } from '@skynexui/components';
+import {
+  Box, Button, Text, Image,
+} from '@skynexui/components';
 import appConfig from '../../config.json';
 
-function ButtonSendSticker(props) {
+function ButtonSendSticker({ onStickerClick }) {
   const [isOpen, setOpenState] = React.useState('');
 
   return (
@@ -27,9 +30,9 @@ function ButtonSendSticker(props) {
           filter: isOpen ? 'grayscale(0)' : 'grayscale(1)',
           hover: {
             filter: 'grayscale(0)',
-          }
+          },
         }}
-        label="😋"
+        label="😄"
         onClick={() => setOpenState(!isOpen)}
       />
       {isOpen && (
@@ -54,7 +57,7 @@ function ButtonSendSticker(props) {
         >
           <Text
             styleSheet={{
-              color: appConfig.theme.colors.neutrals["000"],
+              color: appConfig.theme.colors.neutrals['000'],
               fontWeight: 'bold',
             }}
           >
@@ -74,11 +77,12 @@ function ButtonSendSticker(props) {
             {appConfig.stickers.map((sticker) => (
               <Text
                 onClick={() => {
-                  if (Boolean(props.onStickerClick)) {
-                    props.onStickerClick(sticker);
+                  if (onStickerClick) {
+                    onStickerClick(sticker);
                   }
                 }}
-                tag="li" key={sticker}
+                tag="li"
+                key={sticker}
                 styleSheet={{
                   width: '50%',
                   borderRadius: '5px',
@@ -88,7 +92,7 @@ function ButtonSendSticker(props) {
                   },
                   hover: {
                     backgroundColor: appConfig.theme.colors.neutrals[600],
-                  }
+                  },
                 }}
               >
                 <Image src={sticker} />
@@ -98,7 +102,7 @@ function ButtonSendSticker(props) {
         </Box>
       )}
     </Box>
-  )
+  );
 }
 
 export default ButtonSendSticker;

@@ -5,9 +5,9 @@ import {
 } from '@skynexui/components';
 import React, { useEffect } from 'react';
 import { useState } from 'react/cjs/react.development';
-import appConfig from '../config.json';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
+import appConfig from '../config.json';
 import ButtonSendSticker from '../src/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4NTg1OCwiZXhwIjoxOTU4ODYxODU4fQ.-nkzpY58Pk50Lkb0QhgLMg9zMa9aBN_21WEdWAro_aA';
@@ -18,7 +18,7 @@ function escutaMensagemTempoReal(adicionaMensagem) {
   return supabaseClient
     .from('mensagens')
     .on('INSERT', (novaMensagem) => {
-      adicionaMensagem(novaMensagem.new)
+      adicionaMensagem(novaMensagem.new);
     }).subscribe();
 }
 
@@ -38,7 +38,7 @@ function ChatPage() {
     supabaseClient
       .from('mensagens')
       .insert([mensagem])
-      .then(({ data }) => { });
+      .then(() => { });
 
     setCampoMensagem('');
   }
@@ -53,12 +53,7 @@ function ChatPage() {
       });
 
     escutaMensagemTempoReal((novaMensagem) => {
-      setListaMensagem((valorAtualListaMensagem) => {
-        return [
-          novaMensagem,
-          ...valorAtualListaMensagem,
-        ]
-      });
+      setListaMensagem((valorAtualListaMensagem) => [novaMensagem, ...valorAtualListaMensagem]);
     });
   }, []);
 
@@ -140,7 +135,8 @@ function ChatPage() {
             <ButtonSendSticker
               onStickerClick={(sticker) => {
                 handlerNovaMensagem(`:sticker: ${sticker}`);
-              }} />
+              }}
+            />
           </Box>
         </Box>
       </Box>
